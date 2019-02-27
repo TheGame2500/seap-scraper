@@ -1,0 +1,12 @@
+{
+	"public": {
+		"API_ROOT_URL": "https://sicap-prod.e-licitatie.ro",
+		"DATE_FORMAT": "YYYY-MM-DD"
+	},
+	"DEFAULT_REQUEST_ARGS":  {
+		"headers": {
+			"Content-Type": "application/json",
+			"Referer": "https://sicap-prod.e-licitatie.ro"
+		}
+	}
+}
