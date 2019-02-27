@@ -82,14 +82,22 @@ Meteor.methods({
 	'contracts.fetch': async function ({ authorityKeyword, CPVKeyword, startDate, endDate, priceThreshold = 0 }) {
 		if (!this.userId) return;
 		try {
+			if (!CPVKeyword && !authorityKeyword) {
+				throw new Meteor.Error('contracts.fetch.oneRequired', 'At least one of authority or CPV required')
+			}
 			Contracts.remove({ userID: this.userId })
 			Meteor.users.update(this.userId, { $unset: { 'profile.loading': 1 } })
 			const periods = getPeriods(startDate, endDate)
+
 			const authorities = authorityKeyword ? Meteor.call('authorities.list', authorityKeyword) : [false]
-			const CPVs = CPVKeyword ? Meteor.call('authorities.list', authorityKeyword) : [false]
+			const CPVs = CPVKeyword ? Meteor.call('CPVs.list', CPVKeyword) : [false]
 			const totalFetches = periods.length * authorities.length * CPVs.length
 
-			Meteor.users.update(this.userId, { $set: { 'profile.loading': { totalFetches } } })
+			if (totalFetches === 0) {
+				throw new Meteor.Error('contracts.fetch.noResults', 'No results for these filters')
+			}
+
+			Meteor.users.update(this.userId, { $set: { 'profile.loading': { totalFetches, fetchesDone: 0 } } })
 			let index = 0;
 			for (const authority of authorities) {
 				for (const CPV of CPVs) {
@@ -104,7 +112,7 @@ Meteor.methods({
 			return true
 		} catch (ex) {
 			console.error('contracts.fetch something went wrong', ex)
-			Meteor.users.update(this.userId, { $set: { 'profile.loading': { error: 'Something went wrong. Please retry' } } })
+			Meteor.users.update(this.userId, { $set: { 'profile.loading': { error: ex instanceof Meteor.Error ? ex.reason : 'Something went wrong. Please retry' } } })
 		}
 	},
 })
