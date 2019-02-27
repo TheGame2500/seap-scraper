@@ -3,6 +3,7 @@ import { Meteor } from 'meteor/meteor'
 
 Meteor.methods({
 	'CPVs.list': function (keyword) {
+		if (!this.userId) return;
 		const PUBLIC_AUTHORITY_LIST_URL = `${Meteor.settings.public.API_ROOT_URL}/api-pub/ComboPub/searchCpvs`
 
 		const CPVs = HTTP.get(PUBLIC_AUTHORITY_LIST_URL, {

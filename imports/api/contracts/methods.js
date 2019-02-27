@@ -80,6 +80,7 @@ function getPeriods(startDate, endDate) {
 
 Meteor.methods({
 	'contracts.fetch': async function ({ authorityKeyword, CPVKeyword, startDate, endDate, priceThreshold = 0 }) {
+		if (!this.userId) return;
 		try {
 			Contracts.remove({ userID: this.userId })
 			Meteor.users.update(this.userId, { $unset: { 'profile.loading': 1 } })

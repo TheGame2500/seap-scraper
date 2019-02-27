@@ -3,6 +3,7 @@ import { Meteor } from 'meteor/meteor'
 
 Meteor.methods({
 	'authorities.list': function (keyword) {
+		if (!this.userId) return;
 		const PUBLIC_AUTHORITY_LIST_URL = `${Meteor.settings.public.API_ROOT_URL}/api-pub/ComboPub/searchContractingAuthorities`
 
 		const publicAuthorities = HTTP.get(PUBLIC_AUTHORITY_LIST_URL, {
