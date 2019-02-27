@@ -16,7 +16,7 @@ async function getAquisitions({ authority, CPV, period, priceThreshold }, userID
 		filter.cpvCodeId = CPV.id
 	}
 
-	const aquisitions = HTTP.post(AQUISITION_LIST_URL, {
+	const aquisitionsResponse = HTTP.post(AQUISITION_LIST_URL, {
 		...Meteor.settings.DEFAULT_REQUEST_ARGS,
 		data: {
 			...filter,
@@ -32,6 +32,7 @@ async function getAquisitions({ authority, CPV, period, priceThreshold }, userID
 		},
 	})
 
+	const aquisitions = aquisitionsResponse.data
 	aquisitions.items.forEach(aquisition => {
 		if (aquisition.estimatedValueOtherCurrency < priceThreshold) return;
 
@@ -78,18 +79,31 @@ function getPeriods(startDate, endDate) {
 }
 
 Meteor.methods({
-	'contracts.list': async function ({ authorities = [null], CPVs = [null], startDate, endDate, priceThreshold = 0 }) {
-		Contracts.remove({ userID: this.userId })
-		const periods = getPeriods(startDate, endDate)
+	'contracts.fetch': async function ({ authorityKeyword, CPVKeyword, startDate, endDate, priceThreshold = 0 }) {
+		try {
+			Contracts.remove({ userID: this.userId })
+			Meteor.users.update(this.userId, { $unset: { 'profile.loading': 1 } })
+			const periods = getPeriods(startDate, endDate)
+			const authorities = authorityKeyword ? Meteor.call('authorities.list', authorityKeyword) : [false]
+			const CPVs = CPVKeyword ? Meteor.call('authorities.list', authorityKeyword) : [false]
+			const totalFetches = periods.length * authorities.length * CPVs.length
 
-		for (const authority of authorities) {
-			for (const CPV of CPVs) {
-				for (const period of periods) {
-					await getAquisitions({ authority, CPV, period, priceThreshold, userID: this.userId }) // eslint-disable-line no-await-in-loop
+			Meteor.users.update(this.userId, { $set: { 'profile.loading': { totalFetches } } })
+			let index = 0;
+			for (const authority of authorities) {
+				for (const CPV of CPVs) {
+					for (const period of periods) {
+						await getAquisitions({ authority, CPV, period, priceThreshold }, this.userId) // eslint-disable-line no-await-in-loop
+						index++
+						Meteor.users.update(this.userId, { $set: { 'profile.loading.fetchesDone': index } })
+					}
 				}
 			}
-		}
 
-		return true
+			return true
+		} catch (ex) {
+			console.error('contracts.fetch something went wrong', ex)
+			Meteor.users.update(this.userId, { $set: { 'profile.loading': { error: 'Something went wrong. Please retry' } } })
+		}
 	},
 })
