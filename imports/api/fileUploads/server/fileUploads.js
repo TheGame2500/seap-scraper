@@ -1,11 +1,9 @@
 import { WebApp } from 'meteor/webapp'
 import readline from 'readline'
-
+import csvParse from 'csv-parse'
 
 //using interal webapp or iron:router
 WebApp.connectHandlers.use('/uploadFile', function (req, res) {
-	//var start = Date.now()
-
 	const rl = readline.createInterface({
 		input: req,
 		terminal: false,
@@ -17,7 +15,10 @@ WebApp.connectHandlers.use('/uploadFile', function (req, res) {
 		//console.log('Finish uploading, time taken: ' + Date.now() - start);
 	});
 
+	console.log(rl.pipe)
 	rl.on('line', line => {
 		// console.log('got line', line)
 	})
+
+
 });
