@@ -3,7 +3,7 @@ import { Meteor } from 'meteor/meteor'
 import moment from 'moment'
 import { Contracts } from './contracts'
 
-async function getAquisitions({ authority, CPV, period, priceThreshold }, userID, pageIndex = 0) {
+async function getAquisitions({ authority, company, CPV, period, priceThreshold }, userID, pageIndex = 0) {
 	const PAGE_SIZE = 1000;
 	const AQUISITION_LIST_URL = `${Meteor.settings.public.API_ROOT_URL}/api-pub/DirectAcquisitionCommon/GetDirectAcquisitionList`
 	const filter = {}
@@ -14,6 +14,10 @@ async function getAquisitions({ authority, CPV, period, priceThreshold }, userID
 
 	if (CPV) {
 		filter.cpvCodeId = CPV.id
+	}
+
+	if (company) {
+		filter.supplierId = company.id
 	}
 
 	const aquisitionsResponse = HTTP.post(AQUISITION_LIST_URL, {
@@ -49,7 +53,7 @@ async function getAquisitions({ authority, CPV, period, priceThreshold }, userID
 	}
 	// console.log('Fetched', totalAquisitions, 'out of ', aquisitions.total, 'for authority', authority.text)
 
-	return getAquisitions({ authority, CPV, period, priceThreshold }, userID, pageIndex + 1)
+	return getAquisitions({ authority, company, CPV, period, priceThreshold }, userID, pageIndex + 1)
 
 }
 
@@ -79,11 +83,11 @@ function getPeriods(startDate, endDate) {
 }
 
 Meteor.methods({
-	'contracts.fetch': async function ({ authorityKeyword, CPVKeyword, startDate, endDate, priceThreshold = 0 }) {
+	'contracts.fetch': async function ({ authorityKeyword, CPVKeyword, companyKeyword, startDate, endDate, priceThreshold = 0 }) {
 		if (!this.userId) return;
 		try {
-			if (!CPVKeyword && !authorityKeyword) {
-				throw new Meteor.Error('contracts.fetch.oneRequired', 'At least one of authority or CPV required')
+			if (!CPVKeyword && !authorityKeyword && !companyKeyword) {
+				throw new Meteor.Error('contracts.fetch.oneRequired', 'At least one of authority, company or CPV required')
 			}
 			Contracts.remove({ userID: this.userId })
 			Meteor.users.update(this.userId, { $unset: { 'profile.loading': 1 } })
@@ -91,6 +95,8 @@ Meteor.methods({
 
 			const authorities = authorityKeyword ? Meteor.call('authorities.list', authorityKeyword) : [false]
 			const CPVs = CPVKeyword ? Meteor.call('CPVs.list', CPVKeyword) : [false]
+			const companies = companyKeyword ? Meteor.call('companies.list', companyKeyword) : [false]
+
 			const totalFetches = periods.length * authorities.length * CPVs.length
 
 			if (totalFetches === 0) {
@@ -102,9 +108,11 @@ Meteor.methods({
 			for (const authority of authorities) {
 				for (const CPV of CPVs) {
 					for (const period of periods) {
-						await getAquisitions({ authority, CPV, period, priceThreshold }, this.userId) // eslint-disable-line no-await-in-loop
-						index++
-						Meteor.users.update(this.userId, { $set: { 'profile.loading.fetchesDone': index } })
+						for (const company of companies) {
+							await getAquisitions({ authority, company, CPV, period, priceThreshold }, this.userId) // eslint-disable-line no-await-in-loop
+							index++
+							Meteor.users.update(this.userId, { $set: { 'profile.loading.fetchesDone': index } })
+						}
 					}
 				}
 			}

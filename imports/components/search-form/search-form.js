@@ -16,6 +16,11 @@ const searchSchema = new SimpleSchema({
 		label: 'CPV',
 		optional: true,
 	},
+	companyKeyword: {
+		type: String,
+		label: 'Company',
+		optional: true,
+	},
 	startDate: {
 		type: String,
 		autoform: {
