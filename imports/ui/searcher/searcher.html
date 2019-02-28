@@ -1,4 +1,7 @@
 <template name='searcher'>
+	{{#if currentUser.isAdmin}}
+		{{> fileUploader}}
+	{{/if}}
 	{{> searchForm }}
 	{{> loader}}
 	{{> table }}
