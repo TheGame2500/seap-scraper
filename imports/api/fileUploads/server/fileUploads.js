@@ -1,6 +1,6 @@
 import { WebApp } from 'meteor/webapp'
+import readline from 'readline'
 
-const readline = Npm.require('readline')
 
 //using interal webapp or iron:router
 WebApp.connectHandlers.use('/uploadFile', function (req, res) {
