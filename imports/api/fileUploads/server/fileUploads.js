@@ -67,7 +67,7 @@ WebApp.connectHandlers.use('/uploadFile', function (req, res) {
 				return newPrev
 			}, { csvImport: true })
 
-			Contracts.rawCollection().insert(contract)
+			Contracts.rawCollection().update({ uniqueIdentificationCode: contract.uniqueIdentificationCode }, { $set: contract }, { upsert: true })
 
 			record = parser.read()
 		}
