@@ -42,6 +42,13 @@ WebApp.connectHandlers.use('/uploadFile', function (req, res) {
 		},
 	})
 
+	req.on('aborted', event => {
+		console.error('aborted', event);
+		res.writeHead(503)
+		parser.end()
+		res.end()
+	})
+
 	rl.on('close', function () {
 		res.writeHead(200)
 		parser.end()
