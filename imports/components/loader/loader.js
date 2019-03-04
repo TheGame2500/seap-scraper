@@ -7,6 +7,8 @@ Template.loader.helpers({
 		return user.profile && user.profile.loading && user.profile.loading.error
 	},
 	loadingData() {
+		if (Template.currentData() && Template.currentData().loadingData) return Template.currentData().loadingData
+
 		const user = Meteor.user()
 		const loadingData = user.profile && user.profile.loading
 		if (!loadingData) return;

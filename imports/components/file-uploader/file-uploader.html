@@ -2,4 +2,8 @@
 	Upload CSV
 	<input id='upload-file' type='file'>
 	<button id='upload' class='btn btn-default btn-info'>UPLOAD</button>
+
+	{{#if loadingData}}
+		{{ > loader loadingData=loadingData}}
+	{{/if}}
 </template>

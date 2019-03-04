@@ -3,7 +3,7 @@
 		<div class="alert alert-danger" role="alert">{{error}}</div>
 	{{else}}
 		{{#with loadingData}}
-			<div class="alert alert-{{class}}" role="alert">{{copy}} {{percent}}</div>
+			<div class="alert alert-{{class}}" role="alert">{{copy}} {{percent}} {{#if loaded}} ({{loaded}} / {{total}}) {{/if}}</div>
 		{{/with}}
 	{{/if}}
 </template>
