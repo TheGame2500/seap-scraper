@@ -2,8 +2,8 @@ import { Template } from 'meteor/templating';
 import './file-uploader.html'
 
 Template.fileUploader.events({
-	'change #upload-file': function (event) {
-		const file = event.target.files[0];
+	'click #upload': function (event) {
+		const file = $('#upload-file')[0].files[0];
 		if (!file) return;
 
 		const xhr = new XMLHttpRequest();

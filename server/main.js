@@ -10,5 +10,5 @@ import '../imports/api/users/server/publish'
 
 Meteor.startup(() => {
 	// code to run on server at startup
-	console.log('App started')
+	console.log('App started as ', process.pid)
 });
