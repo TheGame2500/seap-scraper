@@ -17,6 +17,7 @@ const HEADER_VALS = {
 
 //using interal webapp or iron:router
 WebApp.connectHandlers.use('/uploadFile', function (req, res) {
+	console.log('Upload started')
 	const start = Date.now()
 	const rl = readline.createInterface({
 		input: req,
@@ -67,7 +68,7 @@ WebApp.connectHandlers.use('/uploadFile', function (req, res) {
 				return newPrev
 			}, { csvImport: true })
 
-			Contracts.rawCollection().update({ uniqueIdentificationCode: contract.uniqueIdentificationCode }, { $set: contract }, { upsert: true })
+			Contracts.rawCollection().update({ uniqueIdentificationCode: contract.uniqueIdentificationCode }, { $set: contract }, { upsert: true }, (err) => { if (err) console.error('ERROR', err) })
 
 			record = parser.read()
 		}
