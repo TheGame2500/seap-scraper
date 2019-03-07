@@ -1,6 +1,8 @@
 import SimpleSchema from 'simpl-schema'
 import { Template } from 'meteor/templating';
 import { Meteor } from 'meteor/meteor';
+import { AutoForm } from 'meteor/aldeed:autoform'
+
 import './search-form.html'
 
 SimpleSchema.extendOptions(['autoform'])
@@ -37,10 +39,16 @@ const searchSchema = new SimpleSchema({
 		type: Number,
 		optional: true,
 	},
+	historicData: Boolean,
 })
 
 Template.searchForm.helpers({
 	searchSchema() {
 		return searchSchema
+	},
+	type() {
+		const historicData = AutoForm.getFieldValue('historicData', 'searchForm')
+
+		return historicData ? 'normal' : 'method'
 	},
 })

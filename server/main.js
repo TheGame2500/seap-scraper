@@ -4,6 +4,7 @@ import '../imports/api/companies/methods'
 import '../imports/api/contracts/methods'
 import '../imports/api/CPVs/methods'
 import '../imports/api/fileUploads/server/fileUploads'
+import '../imports/api/fileExports/server/api'
 
 import '../imports/api/contracts/server/publish'
 import '../imports/api/users/server/publish'

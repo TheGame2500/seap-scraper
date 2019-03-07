@@ -1,5 +1,5 @@
 <template name='searchForm'>
 	<div class='form-inline'>
-		{{> quickForm id='searchForm' schema=searchSchema type="method" meteormethod="contracts.fetch"}}
+		{{> quickForm id='searchForm' method='POST' action='/export' schema=searchSchema type=type meteormethod="contracts.fetch" target='_blank'}}
 	</div>
 </template>
