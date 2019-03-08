@@ -10,11 +10,12 @@
   "dependencies": {
     "@babel/runtime": "^7.1.5",
     "babel-runtime": "^6.23.0",
+    "bcrypt": "3.0.0",
     "csv-parse": "^4.3.3",
+    "csv-stringify": "^5.3.0",
     "meteor-node-stubs": "^0.4.1",
     "moment": "^2.24.0",
-    "simpl-schema": "^1.5.5",
-    "bcrypt": "3.0.0"
+    "simpl-schema": "^1.5.5"
   },
   "devDependencies": {
     "eslint": "^4.18.2",
