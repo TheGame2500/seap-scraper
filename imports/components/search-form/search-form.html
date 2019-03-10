@@ -1,4 +1,8 @@
 <template name='searchForm'>
+	<div>
+		<label> Historic data </label>
+		<input id='historic-data' type='checkbox' {{historicDataChecked}}>
+	</div>
 	<div class='form-inline'>
 		{{> quickForm id='searchForm' method='POST' action='/export' schema=searchSchema type=type meteormethod="contracts.fetch" target='_blank'}}
 	</div>

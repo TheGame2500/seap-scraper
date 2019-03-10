@@ -2,6 +2,7 @@ import SimpleSchema from 'simpl-schema'
 import { Template } from 'meteor/templating';
 import { Meteor } from 'meteor/meteor';
 import { AutoForm } from 'meteor/aldeed:autoform'
+import { ReactiveVar } from 'meteor/reactive-var';
 
 import './search-form.html'
 
@@ -23,6 +24,13 @@ const searchSchema = new SimpleSchema({
 		label: 'Company',
 		optional: true,
 	},
+	fuzzyKeyword: {
+		type: String,
+		label: 'Keyword',
+		autoform: {
+			placeholder: 'CPV / Authority / Company',
+		},
+	},
 	startDate: {
 		type: String,
 		autoform: {
@@ -39,16 +47,25 @@ const searchSchema = new SimpleSchema({
 		type: Number,
 		optional: true,
 	},
-	historicData: Boolean,
 })
 
+Template.searchForm.onCreated(function () {
+	this.historicData = new ReactiveVar(false)
+})
+
+Template.searchForm.events({
+	'change #historic-data': function (ev, template) {
+		template.historicData.set(ev.target.checked)
+	},
+})
 Template.searchForm.helpers({
 	searchSchema() {
-		return searchSchema
+		const historicData = Template.instance().historicData.get()
+		const fieldsToOmit = historicData ? ['authorityKeyword', 'CPVKeyword', 'companyKeyword'] : ['fuzzyKeyword']
+		return searchSchema.omit(...fieldsToOmit)
 	},
 	type() {
-		const historicData = AutoForm.getFieldValue('historicData', 'searchForm')
-
+		const historicData = Template.instance().historicData.get()
 		return historicData ? 'normal' : 'method'
 	},
 })
