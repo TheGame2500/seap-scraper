@@ -43,7 +43,7 @@ async function getAquisitions({ authority, company, CPV, period, priceThreshold 
 		const { contractingAuthority, supplier, directAcquisitionName, uniqueIdentificationCode, finalizationDate, estimatedValueRon, estimatedValueOtherCurrency, cpvCode } = aquisition;
 
 
-		Contracts.insert({ contractingAuthority, supplier, directAcquisitionName, uniqueIdentificationCode, finalizationDate, estimatedValueRon, estimatedValueOtherCurrency, cpvCode, userID })
+		Contracts.upsert({ uniqueIdentificationCode }, { contractingAuthority, supplier, directAcquisitionName, uniqueIdentificationCode, finalizationDate, estimatedValueRon, estimatedValueOtherCurrency, cpvCode, userID })
 	})
 
 	// const totalAquisitions = (PAGE_SIZE * pageIndex) + aquisitions.items.length
