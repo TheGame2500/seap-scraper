@@ -89,7 +89,7 @@ Meteor.methods({
 			if (!CPVKeyword && !authorityKeyword && !companyKeyword) {
 				throw new Meteor.Error('contracts.fetch.oneRequired', 'At least one of authority, company or CPV required')
 			}
-			Contracts.remove({ userID: this.userId })
+			Contracts.update({ userID: this.userId }, { $unset: { userID: 1 } }, { multi: true })
 			Meteor.users.update(this.userId, { $unset: { 'profile.loading': 1 } })
 			const periods = getPeriods(startDate, endDate)
 
