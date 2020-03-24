@@ -28,7 +28,7 @@ async function getAquisitions({ authority, company, CPV, period, priceThreshold 
 			showOngoingDa: false,
 			cookieContext: null,
 			pageIndex,
-			sysDirectAcquisitionStateId: null,
+			sysDirectAcquisitionStateId: 7, // accepted aquisition
 			finalizationDateStart: period.start,
 			finalizationDateEnd: period.end,
 			publicationDateStart: null,
@@ -97,7 +97,7 @@ Meteor.methods({
 			const CPVs = CPVKeyword ? Meteor.call('CPVs.list', CPVKeyword) : [false]
 			const companies = companyKeyword ? Meteor.call('companies.list', companyKeyword) : [false]
 
-			const totalFetches = periods.length * authorities.length * CPVs.length
+			const totalFetches = periods.length * authorities.length * CPVs.length * companies.length
 
 			if (totalFetches === 0) {
 				throw new Meteor.Error('contracts.fetch.noResults', 'No results for these filters')
