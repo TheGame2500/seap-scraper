@@ -1,7 +1,6 @@
 import SimpleSchema from 'simpl-schema'
 import { Template } from 'meteor/templating';
 import { Meteor } from 'meteor/meteor';
-import { AutoForm } from 'meteor/aldeed:autoform'
 import { ReactiveVar } from 'meteor/reactive-var';
 
 import './search-form.html'
