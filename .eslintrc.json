@@ -38,7 +38,7 @@
         "max-len": "off",
         "no-unused-expressions": "off",
         "chai-friendly/no-unused-expressions": "error",
-        "no-console" : "warn",
+        "no-console" : "off",
         "no-eval" : "error",
         "no-useless-escape" : "off",
         "no-continue" : "off",
